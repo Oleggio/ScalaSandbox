@@ -15,6 +15,13 @@ val b = new Fraction(12,3, "Decimal")
 
 // val c = new Fraction(1001, 4) //java.lang.IllegalArgumentException: requirement failed: Too big numerator
 
+class Another {
+  def this(n:  Int) = {this()}
+}
+
+var aa = new Another()
+
+// Checks equals method. For reference equality eq method
 a == b
 
 //Singleton
@@ -42,8 +49,8 @@ val l4 = (0 to 10).toList
 // l4 = l4 :+ 4 Error: reassignment to val
 
 var l5 = (0 to 10).toList
-l5 = l5 :+ 11
-l5 = -1 +: l5
+l5 = l5 :+ 11 // Add at the end of a list
+l5 = -1 +: l5 // Add at the beginning of a list
 l5 = -2 :: l5 // Does the same as previous
 l5 size;
 l5 = l5 ++ l // joins 2 lists
