@@ -3,6 +3,7 @@
   */
 import java.sql.DriverManager
 import java.sql.Connection
+import com.typesafe.config._
 //Incorrect way to read data from sql, no functional programming using Java API
 case class EmployeesCommission(first_name: String,
                               last_name: String,
@@ -10,24 +11,30 @@ case class EmployeesCommission(first_name: String,
                               commission_pct: Float) {
   override def toString:String = {
     "first name: "+ first_name + ", last_name: " + last_name + ", salary: " + salary + ", commission_pct: " +
-      commission_pct + "; commission amount: " + getCommissionAmount()
+      commission_pct + "; commission amount: " + getCommissionAmount
   }
 
-  def getCommissionAmount(): Any = {
+  def getCommissionAmount: Any = {
     if (commission_pct > 0) return salary * commission_pct
     "Not eligible"
   }
 }
 
+//pass dev for dev config
 object ComissionAmount {
 
   def main(args: Array[String]): Unit = {
-    val driver = "com.mysql.jdbc.Driver" // class path to the driver
-    val url = "jdbc:mysql://nn01.itversity.com:3306/hr"
-    val username = "hr_ro"
-    val password = "itversity"
 
-    Class.forName(driver)
+    val props = ConfigFactory.load()
+    val driver = "com.mysql.jdbc.Driver" // class path to the driver
+    var host = props.getConfig(args(0)).getString("host")
+    var port = props.getConfig(args(0)).getString("port")
+    var db = props.getConfig(args(0)).getString("db")
+    val url = "jdbc:mysql://" + host + ":" + port + "/" + db
+    val username = props.getConfig(args(0)).getString("user")
+    val password = props.getConfig(args(0)).getString("pw")
+
+    Class.forName(driver) //Initialize class by name
     val connection = DriverManager.getConnection(url,username,password)
     val statement = connection.createStatement()
     val resultSet = statement.executeQuery(s"SELECT first_name, last_name, salary, commission_pct " +
