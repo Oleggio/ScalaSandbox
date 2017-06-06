@@ -4,7 +4,7 @@
 import java.sql.DriverManager
 import java.sql.Connection
 import com.typesafe.config._
-//Incorrect way to read data from sql, no functional programming using Java API
+
 case class EmployeesCommission(first_name: String,
                               last_name: String,
                               salary: Double,
@@ -40,11 +40,23 @@ object ComissionAmount {
     val resultSet = statement.executeQuery(s"SELECT first_name, last_name, salary, commission_pct " +
       s"FROM employees")
 
-    while (resultSet.next()) {
-      println(EmployeesCommission(resultSet.getString("first_name"),
-        resultSet.getString("last_name"),
-        resultSet.getDouble("salary"),
-        resultSet.getFloat("commission_pct")))
-    }
+    Iterator.continually((resultSet, resultSet.next)).
+      takeWhile(rec => rec._2). //takeWhile (_._2) - also eligible
+      map(_._1).map(rec => {
+      EmployeesCommission(rec.getString("first_name"),
+        rec.getString("last_name"),
+        rec.getDouble("salary"),
+        rec.getFloat("commission_pct"))
+    }).foreach(rec => {
+      println(rec)
+    })
+
+//Incorrect way to read data from sql, no functional programming using Java API
+//    while (resultSet.next()) {
+//      println(EmployeesCommission(resultSet.getString("first_name"),
+//        resultSet.getString("last_name"),
+//        resultSet.getDouble("salary"),
+//        resultSet.getFloat("commission_pct")))
+//    }
   }
 }
