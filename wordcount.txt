@@ -1,0 +1,4 @@
+Internally, each RDD is characterized by five main properties:
+
+A list of partitions
+A function for computing each split
